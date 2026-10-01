@@ -1,0 +1,308 @@
+POST http://localhost:8080/productos
+Content-Type: application/json
+
+{
+  "nombre": "Teclado mecánico",
+  "precio": 45990.0
+}
+
+###
+
+POST http://localhost:8080/productos
+Content-Type: application/json
+
+{
+  "nombre": "",
+  "precio": -100
+}
+
+###
+
+GET http://localhost:8080/productos
+#Authorization: Basic usuario admin123 # Springboot Security, necesario para correr la petición con código 200
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0NDA5IiwiaWF0IjoxNzkwNzczMTI5LCJleHAiOjE3OTA3NzY3Mjl9.e-d9PnigdeeLlFGiqUyyhUK4YMF_EN7r9-jDsIayF4eQhQhaOPwgCD9nbUWpbUZwR5EJx18B9LZBE8wuYesvRg
+
+###
+
+###
+
+GET http://localhost:8080/productos
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0NDA5IiwiaWF0IjoxNzkwNzczODU2LCJleHAiOjE3OTA3Nzc0NTZ9.TNkYOnYC92_MN8WV_DUxx5Fmj6IfqUAZ2v8mv3QrLNwx16StvunhkKfW7rX9i6rL20X4BbZE1UN81XblmGzJUQ
+
+###
+
+GET http://localhost:8080/productos/1
+
+###
+
+GET http://localhost:8080/productos?page=0&size=1
+
+###
+
+GET http://localhost:8080/productos?page=0&size=10&sort=precio,desc
+
+###
+
+PUT http://localhost:8080/productos/1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c3VhcmlvIiwiaWF0IjoxNzkwNjA0NzUxLCJleHAiOjE3OTA2MDgzNTF9.YdqrS8qp8TjXjo_HLOVF465bEk_jTknBn_T7TZ5isjX40v_dr7OvnbAHkGaSLEVJYePk2xc5b04JlSG5M6-u3A
+Content-Type: application/json
+
+{
+    "nombre": "Teclado mecánico RGB",
+    "precio": 52990.0,
+    "categoriaId": 9999
+}
+
+###
+
+PUT http://localhost:8080/categorias/
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c3VhcmlvIiwiaWF0IjoxNzkwNjA0NzUxLCJleHAiOjE3OTA2MDgzNTF9.YdqrS8qp8TjXjo_HLOVF465bEk_jTknBn_T7TZ5isjX40v_dr7OvnbAHkGaSLEVJYePk2xc5b04JlSG5M6-u3A
+Content-Type: application/json
+
+
+{
+  "id": 99999,
+  "nombre": "Categoria no encontrada"
+}
+
+###
+
+DELETE http://localhost:8080/productos/6
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0NDA5IiwiaWF0IjoxNzkwNzczODU2LCJleHAiOjE3OTA3Nzc0NTZ9.TNkYOnYC92_MN8WV_DUxx5Fmj6IfqUAZ2v8mv3QrLNwx16StvunhkKfW7rX9i6rL20X4BbZE1UN81XblmGzJUQ
+
+###
+
+POST http://localhost:8080/categorias
+Content-Type: application/json
+
+{
+  "nombre": "Periféricos"
+}
+
+###
+
+POST http://localhost:8080/categorias
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0NDA5IiwiaWF0IjoxNzkwNzc1ODAxLCJleHAiOjE3OTA3Nzk0MDF9.x3PZ8gvTST6m0I9bWhTK4_DQXk3ltdXTzkRc4JFEPhB2qeGmt7VD9qEDEuiZef2ftMvDlIT5Smbb3WJryGBhHA
+Content-Type: application/json
+
+{
+  "nombre": "Periféricos 2"
+}
+
+
+###
+
+POST http://localhost:8080/productos
+Content-Type: application/json
+
+{
+  "nombre": "Mouse gamer",
+  "precio": 29990.0,
+  "categoria": { "id": 1 }
+}
+
+###
+
+GET http://localhost:8080/productos/buscar?nombre=mouse
+
+###
+
+GET http://localhost:8080/productos/filtrar?categoriaId=1&precioMax=50000
+
+###
+
+POST http://localhost:8080/productos
+Content-Type: application/json
+
+{
+  "id": 999,
+  "nombre": "Producto hackeado",
+  "precio": 100
+}
+
+###
+
+POST http://localhost:8080/productos
+Content-Type: application/json
+
+{
+  "nombre": "Audífonos gamer",
+  "precio": 39990.0,
+  "categoriaId": 1
+}
+
+###
+
+GET http://localhost:8080/categorias
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0NDA5IiwiaWF0IjoxNzkwNzc1ODAxLCJleHAiOjE3OTA3Nzk0MDF9.x3PZ8gvTST6m0I9bWhTK4_DQXk3ltdXTzkRc4JFEPhB2qeGmt7VD9qEDEuiZef2ftMvDlIT5Smbb3WJryGBhHA
+
+###
+
+POST http://localhost:8080/usuarios/registro
+Content-Type: application/json
+
+{
+    "username": "dark_sakura",
+    "password": "mi_contrasena"
+
+}
+
+###
+
+POST http://localhost:8080/usuarios/registro
+Content-Type: application/json
+
+{
+  "username": "usuario",
+  "password": "admin123"
+
+}
+
+###
+
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "usuario",
+  "password": "admin123"
+}
+
+###
+
+POST http://localhost:8080/productos
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c3VhcmlvIiwiaWF0IjoxNzkwNjA0NzUxLCJleHAiOjE3OTA2MDgzNTF9.YdqrS8qp8TjXjo_HLOVF465bEk_jTknBn_T7TZ5isjX40v_dr7OvnbAHkGaSLEVJYePk2xc5b04JlSG5M6-u3A
+Content-Type: application/json
+
+{
+  "nombre": "Prueba",
+  "precio": 1000.0,
+  "categoriaId": 9999
+}
+
+###
+
+POST http://localhost:8080/usuarios/registro
+Content-Type: application/json
+
+{
+  "username": "usuario_user",
+  "password": "admin123",
+  "rol": "USER"
+}
+
+###
+
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "usuario_user",
+  "password": "admin123"
+}
+
+###
+
+POST http://localhost:8080/usuarios/registro
+Content-Type: application/json
+
+{
+  "username": "usuario_admin_5",
+  "password": "admin123",
+  "rol": "ADMIN"
+}
+
+###
+
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "usuario_admin",
+  "password": "admin123"
+}
+
+###
+
+POST http://localhost:8080/usuarios/registro
+Content-Type: application/json
+
+{
+  "username": "intruso",
+  "password": "clave12345",
+  "rol": "ADMIN"
+}
+
+###
+
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "intruso",
+  "password": "clave12345"
+}
+
+###
+
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "clave-admin-segura"
+}
+
+###
+
+POST http://localhost:8080/usuarios/registro
+Content-Type: application/json
+
+{"username": "test409", "password": "clave12345"}
+
+###
+
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{"username": "test409", "password": "clave12345"}
+
+###
+
+POST http://localhost:8080/usuarios/registro
+Content-Type: application/json
+
+{"username": "testService", "password": "clave12345"}
+
+###
+
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{"username": "testService", "password": "clave12345"}
+
+###
+
+
+POST http://localhost:8080/categorias
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c3VhcmlvIiwiaWF0IjoxNzkwNjg5Njg3LCJleHAiOjE3OTA2OTMyODd9.6tT8N84NnB9UoLDxlEyg3RQAYvmUYH_-JNT4qieNqxd9CDBBtc4zlZVD2cw5YctjJqZI3YkpbUjPXQOLrsEirg
+
+{
+  "id": 999,
+  "nombre": "Accesorios"
+}
+
+###
+
+POST http://localhost:8080/productos
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0NDA5IiwiaWF0IjoxNzkwNzczODU2LCJleHAiOjE3OTA3Nzc0NTZ9.TNkYOnYC92_MN8WV_DUxx5Fmj6IfqUAZ2v8mv3QrLNwx16StvunhkKfW7rX9i6rL20X4BbZE1UN81XblmGzJUQ
+Content-Type: application/json
+
+{
+  "nombre": "Prueba",
+  "precio": 1000.0,
+  "categoriaId": 9999
+}
+
+###
