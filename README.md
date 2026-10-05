@@ -50,7 +50,7 @@ Controller  →  Service  →  Repository  →  Base de datos
 
 - JDK 21
 - Una instancia de SQL Server accesible (o Docker, si se corre en contenedor)
-- Variable de entorno `JWT_SECRET` (string de al menos 32 caracteres) — **no tiene valor por defecto**, la aplicación no arranca sin ella.
+- Variables de entorno `JWT_SECRET` (string de al menos 32 caracteres), `DB_USERNAME` y `DB_PASSWORD` — **no tienen valor por defecto**, la aplicación no arranca sin ellas.
 
 ## Configuración
 
@@ -59,21 +59,34 @@ En `src/main/resources/application.properties` se definen, entre otras:
 ```properties
 jwt.secret=${JWT_SECRET}
 spring.datasource.url=jdbc:sqlserver://localhost;instanceName=SQLEXPRESS;databaseName=productos_db;encrypt=false
-spring.datasource.username=...
-spring.datasource.password=...
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
 spring.jpa.hibernate.ddl-auto=update
 ```
 
-Las credenciales de base de datos y el secreto JWT deben configurarse como variables de entorno o en un `application-local.properties`.
+Las credenciales de base de datos y el secreto JWT se leen desde variables de entorno (`DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`) y nunca deben quedar hardcodeadas ni subirse al repositorio. Para desarrollo local también se puede usar un `application-local.properties`, que está excluido por `.gitignore`.
 
 ## Cómo ejecutar
 
 ### Localmente (Maven)
 
 ```bash
+export DB_USERNAME="tu_usuario"
+export DB_PASSWORD="tu_password"
 export JWT_SECRET="una-clave-secreta-de-al-menos-32-caracteres"
 ./mvnw spring-boot:run
 ```
+
+En PowerShell (Windows):
+
+```powershell
+$env:DB_USERNAME="tu_usuario"
+$env:DB_PASSWORD="tu_password"
+$env:JWT_SECRET="una-clave-secreta-de-al-menos-32-caracteres"
+.\mvnw.cmd spring-boot:run
+```
+
+Estas variables valen solo para la sesión de la terminal actual. Para dejarlas guardadas, usar `setx` y reiniciar la terminal (y el IDE).
 
 La API queda disponible en `http://localhost:8080`.
 
@@ -85,8 +98,8 @@ docker build -t productos-api .
 docker run -p 8080:8080 \
   -e JWT_SECRET="una-clave-secreta-de-al-menos-32-caracteres" \
   -e SPRING_DATASOURCE_URL="jdbc:sqlserver://host.docker.internal;instanceName=SQLEXPRESS;databaseName=productos_db;encrypt=false" \
-  -e SPRING_DATASOURCE_USERNAME="..." \
-  -e SPRING_DATASOURCE_PASSWORD="..." \
+  -e DB_USERNAME="tu_usuario" \
+  -e DB_PASSWORD="tu_password" \
   productos-api
 ```
 
