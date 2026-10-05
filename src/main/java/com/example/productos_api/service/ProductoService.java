@@ -6,6 +6,8 @@ import com.example.productos_api.model.Categoria;
 import com.example.productos_api.model.Producto;
 import com.example.productos_api.repository.CategoriaRepository;
 import com.example.productos_api.repository.ProductoRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import java.util.Optional;
 
 @Service
 public class ProductoService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ProductoService.class);
 
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
@@ -39,6 +43,8 @@ public class ProductoService {
     public ProductoResponseDTO crear(ProductoRequestDTO dto) {
         Producto producto = convertirAEntidad(dto);
         Producto guardado = productoRepository.save(producto);
+
+        LOG.info("Producto creado: id={}, nombre={}", guardado.getId(), guardado.getNombre());
 
         return convertirADTO(guardado);
     }
@@ -65,8 +71,11 @@ public class ProductoService {
     public boolean eliminar(Long id) {
 
         if (!productoRepository.existsById(id)) {
+            LOG.warn("Intento de eliminar un producto inexistente: id={}", id);
             return false;
         }
+
+        LOG.info("Producto eliminado: id={}", id);
 
         productoRepository.deleteById(id);
 
@@ -75,6 +84,8 @@ public class ProductoService {
 
     @Transactional(readOnly = true)
     public List<ProductoResponseDTO> buscarPorNombre(String nombre) {
+
+        LOG.debug("Buscando productos con nombre que contiene: {}", nombre);
 
         return productoRepository.findByNombreContainingIgnoreCase(nombre)
                 .stream()
