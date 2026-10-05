@@ -5,11 +5,15 @@ import com.example.productos_api.dto.UsuarioResponseDTO;
 import com.example.productos_api.model.Rol;
 import com.example.productos_api.model.Usuario;
 import com.example.productos_api.repository.UsuarioRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UsuarioService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UsuarioService.class);
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
@@ -22,11 +26,14 @@ public class UsuarioService {
     public UsuarioResponseDTO crear(UsuarioRequestDTO dto) {
 
         if (usuarioRepository.existsByUsername(dto.getUsername())) {
+
             throw new IllegalArgumentException("El username ya existe: " + dto.getUsername());
         }
 
         Usuario usuario = convertirAEntidad(dto);
         Usuario guardado = usuarioRepository.save(usuario);
+
+        LOG.info("Usuario creado: {}", guardado.getUsername());
 
         return convertirADTO(guardado);
     }
