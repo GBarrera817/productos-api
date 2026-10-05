@@ -25,7 +25,7 @@ public class ProductoService {
         this.categoriaRepository = categoriaRepository;
     }
 
-//    @Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public Page<ProductoResponseDTO> listar(Pageable pageable) {
         return productoRepository.findAll(pageable).map(this::convertirADTO);
     }
