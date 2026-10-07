@@ -49,7 +49,8 @@ public class SecurityConfig {
                                 "/error",
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/auth/refresh"
                         ).permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/productos/**").hasRole("ADMIN")
                         .anyRequest().authenticated()

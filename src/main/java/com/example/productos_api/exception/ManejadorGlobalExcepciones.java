@@ -6,6 +6,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -103,5 +104,24 @@ public class ManejadorGlobalExcepciones {
 
         return ResponseEntity.badRequest()
                 .body(Map.of("error", "Valor inválido para el parámetro: " + ex.getName()));
+    }
+
+    @ExceptionHandler(TokenInvalidoException.class)
+    public ResponseEntity<Map<String, String>> manejarTokenInvalido(TokenInvalidoException ex) {
+
+        // TokenInvalidoException (401)
+        LOG.warn("Refresh token rechazado: {}", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", ex.getMessage()));
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Map<String, String>> manejarAutenticacionFallida(AuthenticationException ex) {
+
+        //AuthenticationExcepcion (401): credenciales incorrectas, cuenta bloqueada, etc.
+        LOG.warn("Autenticación fallida: {}", ex.getClass().getSimpleName());
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("error", "Credenciales inválidas"));
     }
 }
