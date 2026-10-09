@@ -141,6 +141,7 @@ Los endpoints protegidos requieren autenticación. Desde Swagger UI, usar el bot
 | POST | `/usuarios/registro` | Público | Registro de usuario (rol `USER` por defecto) |
 | POST | `/login` | Público | Autenticación; retorna `token` (access token) y `refreshToken` |
 | POST | `/auth/refresh` | Público | Recibe `{"refreshToken": "..."}`; retorna un par `token` / `refreshToken` nuevo y revoca el anterior |
+| POST | `/auth/logout` | Público | Recibe `{"refreshToken": "..."}`; revoca ese refresh token. Responde 204 siempre (idempotente) |
 | GET | `/productos` | Autenticado | Listado paginado de productos |
 | GET | `/productos/{id}` | Autenticado | Obtener producto por id |
 | GET | `/productos/buscar?nombre=` | Autenticado | Búsqueda de productos por nombre |
@@ -164,4 +165,6 @@ Los endpoints protegidos requieren autenticación. Desde Swagger UI, usar el bot
 - **Rotación:** cada refresh token sirve una sola vez. `/auth/refresh` lo marca como revocado y entrega un par nuevo.
 - **Detección de reutilización:** si se presenta un refresh token ya usado, se asume que fue robado: se revocan todos los refresh tokens del usuario y se responde 401. Esa revocación se confirma aunque se lance la excepción (`noRollbackFor` en `RefreshTokenService.rotar`).
 - Un refresh token expirado, desconocido o revocado responde 401 y el usuario debe iniciar sesión de nuevo.
+- **Logout:** `/auth/logout` revoca el refresh token recibido y responde 204 incluso si el token no existe o ya estaba revocado (idempotente, y no revela qué tokens existen). No exige access token, para que un usuario con el access token expirado pueda igualmente cerrar sesión. El access token ya emitido sigue siendo válido hasta que expire (15 minutos por defecto), por ser stateless.
+- Presentar después del logout un refresh token ya revocado se trata como reutilización (revoca todos los tokens del usuario).
 - Los intentos de login con credenciales incorrectas responden 401 con un mensaje genérico, para no revelar si el usuario existe.

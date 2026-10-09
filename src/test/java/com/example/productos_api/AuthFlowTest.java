@@ -2,13 +2,13 @@ package com.example.productos_api;
 
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.UUID;
 
@@ -73,6 +73,15 @@ public class AuthFlowTest {
     private org.springframework.test.web.servlet.ResultActions refrescar(String refreshToken) throws Exception {
 
         return mockMvc.perform(post("/auth/refresh")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"refreshToken": "%s"}
+                        """.formatted(refreshToken)));
+    }
+
+    private ResultActions cerrarSesion(String refreshToken) throws Exception {
+
+        return mockMvc.perform(post("/auth/logout")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {"refreshToken": "%s"}
@@ -155,6 +164,25 @@ public class AuthFlowTest {
 
         refrescar(refreshB)
                 .andExpect(status().isUnauthorized());
+
+    }
+
+    @Test
+    void logout_revocaElRefresToken_yEsIdempotente() throws Exception {
+
+        String refreshA = registrarYObtenerRefreshToken();
+
+        // TODO 1: POST /auth/logout con refreshA → esperar 204
+        cerrarSesion(refreshA)
+                .andExpect(status().isNoContent());
+
+        // TODO 2: refrescar(refreshA) → esperar 401
+        refrescar(refreshA)
+                .andExpect(status().isUnauthorized());
+
+        // TODO 3: POST /auth/logout con refreshA otra vez → esperar 204
+        cerrarSesion(refreshA)
+                .andExpect(status().isNoContent());
 
     }
 }
