@@ -50,7 +50,8 @@ public class SecurityConfig {
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/auth/refresh"
+                                "/auth/refresh",
+                                "/auth/logout"
                         ).permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/productos/**").hasRole("ADMIN")
                         .anyRequest().authenticated()

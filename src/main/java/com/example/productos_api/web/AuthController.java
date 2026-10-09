@@ -4,6 +4,7 @@ import com.example.productos_api.dto.LoginRequestDTO;
 import com.example.productos_api.dto.RefreshRequestDTO;
 import com.example.productos_api.service.AuthService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,4 +27,11 @@ public class AuthController {
 
     @PostMapping("/auth/refresh")
     public Map<String, String> refresh(@Valid @RequestBody RefreshRequestDTO dto) { return authService.refresh(dto.getRefreshToken()); }
+
+    @PostMapping("/auth/logout")
+    public ResponseEntity<Void> logout(@Valid @RequestBody RefreshRequestDTO dto) {
+        authService.logout(dto.getRefreshToken());
+
+        return ResponseEntity.noContent().build();
+    }
 }

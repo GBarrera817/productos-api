@@ -12,10 +12,12 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.sql.Ref;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.HexFormat;
+import java.util.Optional;
 
 @Service
 public class RefreshTokenService {
@@ -75,6 +77,14 @@ public class RefreshTokenService {
         String nuevo = crear(actual.getUsuario());
 
         return new TokensRotados(actual.getUsuario().getUsername(), nuevo);
+    }
+
+    @Transactional()
+    public void revocar(String tokenRecibido) {
+
+        refreshTokenRepository.findByTokenHash(hash(tokenRecibido))
+                .ifPresent(token -> token.setRevocado(true));
+
     }
 
     private String hash(String token) {

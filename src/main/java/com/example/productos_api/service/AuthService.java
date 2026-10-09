@@ -52,4 +52,8 @@ public class AuthService {
 
         return Map.of("token", accessToken, "refreshToken", resultado.refreshToken());
     }
+
+    public void logout(String refreshToken) {
+        refreshTokenService.revocar(refreshToken);
+    }
 }
