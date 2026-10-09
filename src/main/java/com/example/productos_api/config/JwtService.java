@@ -15,11 +15,11 @@ import java.util.function.Function;
 public class JwtService {
 
     private final SecretKey clave;
+    private final long expiracionMs;
 
-    private static final long EXPIRACION_MS = 1000 * 60 * 60; // 1 hora
-
-    public JwtService(@Value("${jwt.secret}") String secret) {
+    public JwtService(@Value("${jwt.secret}") String secret, @Value("${jwt.expiration-ms:900000}") long expiracionMs) {
         this.clave = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.expiracionMs = expiracionMs;
     }
 
     public String generarToken(String username) {
@@ -27,7 +27,7 @@ public class JwtService {
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + EXPIRACION_MS))
+                .expiration(new Date(System.currentTimeMillis() + expiracionMs))
                 .signWith(clave)
                 .compact();
 
