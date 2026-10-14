@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.time.Instant;
 
+@Table(name = "refresh_token", indexes = @Index(name="IX_refresh_token_usuario_id", columnList = "usuario_id"))
 @Entity
 public class RefreshToken {
 
