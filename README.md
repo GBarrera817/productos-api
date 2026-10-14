@@ -52,7 +52,7 @@ Controller  →  Service  →  Repository  →  Base de datos
 
 - JDK 21
 - Una instancia de SQL Server accesible (o Docker, si se corre en contenedor)
-- Variables de entorno `JWT_SECRET` (string de al menos 32 caracteres), `DB_USERNAME` y `DB_PASSWORD` — **no tienen valor por defecto**, la aplicación no arranca sin ellas.
+- Variables de entorno `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` y `JWT_SECRET` (string de al menos 32 caracteres) — **no tienen valor por defecto**, la aplicación no arranca sin ellas.
 
 ## Configuración
 
@@ -60,7 +60,7 @@ En `src/main/resources/application.properties` se definen, entre otras:
 
 ```properties
 jwt.secret=${JWT_SECRET}
-spring.datasource.url=jdbc:sqlserver://localhost;instanceName=SQLEXPRESS;databaseName=productos_db;encrypt=false
+spring.datasource.url=${DB_URL}
 spring.datasource.username=${DB_USERNAME}
 spring.datasource.password=${DB_PASSWORD}
 spring.jpa.hibernate.ddl-auto=update
@@ -76,13 +76,14 @@ Propiedades opcionales (con valor por defecto):
 | `jwt.refresh-expiration-days` | `JWT_REFRESH_EXPIRATION_DAYS` | `7` | Duración del refresh token |
 | `logging.level.com.example.productos_api` | `LOG_LEVEL` | `INFO` | Nivel de log de la aplicación |
 
-Las credenciales de base de datos y el secreto JWT se leen desde variables de entorno (`DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`) y nunca deben quedar hardcodeadas ni subirse al repositorio. Para desarrollo local también se puede usar un `application-local.properties`, que está excluido por `.gitignore`.
+La URL y credenciales de base de datos y el secreto JWT se leen desde variables de entorno (`DB_URL`, `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`) y nunca deben quedar hardcodeadas ni subirse al repositorio. Para desarrollo local también se puede usar un `application-local.properties`, que está excluido por `.gitignore`.
 
 ## Cómo ejecutar
 
 ### Localmente (Maven)
 
 ```bash
+export DB_URL="jdbc:sqlserver://localhost;instanceName=SQLEXPRESS;databaseName=productos_db;encrypt=false"
 export DB_USERNAME="tu_usuario"
 export DB_PASSWORD="tu_password"
 export JWT_SECRET="una-clave-secreta-de-al-menos-32-caracteres"
@@ -92,6 +93,7 @@ export JWT_SECRET="una-clave-secreta-de-al-menos-32-caracteres"
 En PowerShell (Windows):
 
 ```powershell
+$env:DB_URL="jdbc:sqlserver://localhost;instanceName=SQLEXPRESS;databaseName=productos_db;encrypt=false"
 $env:DB_USERNAME="tu_usuario"
 $env:DB_PASSWORD="tu_password"
 $env:JWT_SECRET="una-clave-secreta-de-al-menos-32-caracteres"
@@ -104,18 +106,27 @@ La API queda disponible en `http://localhost:8080`.
 
 ### Con Docker
 
-```bash
-docker build -t productos-api .
+Las variables se pasan desde un archivo `.env` en la raíz del proyecto (excluido por `.gitignore` y `.dockerignore`):
 
-docker run -p 8080:8080 \
-  -e JWT_SECRET="una-clave-secreta-de-al-menos-32-caracteres" \
-  -e SPRING_DATASOURCE_URL="jdbc:sqlserver://host.docker.internal;instanceName=SQLEXPRESS;databaseName=productos_db;encrypt=false" \
-  -e DB_USERNAME="tu_usuario" \
-  -e DB_PASSWORD="tu_password" \
-  productos-api
+```
+DB_URL=jdbc:sqlserver://host.docker.internal;instanceName=SQLEXPRESS;databaseName=productos_db;encrypt=false
+DB_USERNAME=tu_usuario
+DB_PASSWORD=tu_password
+JWT_SECRET=una-clave-secreta-de-al-menos-32-caracteres
+LOG_LEVEL=INFO
 ```
 
-`host.docker.internal` permite que el contenedor acceda a una instancia de SQL Server corriendo en el host.
+Sin comillas, sin espacios alrededor del `=` y con saltos de línea LF: con CRLF (Windows) cada valor llega con un `\r` al final y, por ejemplo, el login a SQL Server falla.
+
+```bash
+docker build -t productos-api:0.1 .
+docker run -p 8080:8080 --env-file .env productos-api:0.1
+```
+
+- Dentro del contenedor `localhost` es el propio contenedor; `host.docker.internal` apunta al host donde corre SQL Server.
+- La instancia con nombre (`SQLEXPRESS`) se resuelve vía el servicio SQL Server Browser del host.
+- El `Dockerfile` es multi-stage: compila con JDK 21 y ejecuta solo con JRE 21. Las dependencias de Maven se descargan en una capa aparte para aprovechar la caché cuando solo cambia el código.
+- Los secretos nunca van en el `Dockerfile` (`ENV`): quedarían grabados en la imagen.
 
 ### Tests
 
